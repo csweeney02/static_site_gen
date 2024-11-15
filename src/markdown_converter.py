@@ -1,4 +1,5 @@
 import re
+import functools
 from textnode import *
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
@@ -81,5 +82,39 @@ def text_to_textnodes(text):
     ))
 
 def markdown_to_blocks(markdown):
-    blocks = markdown.split("\n")
-    
+    lines = markdown.split('\n')
+    blocks = []
+    block = ""
+    for line in lines:
+        if line == "":
+            print("hi")
+            if block != "":
+                blocks.append(block.strip())
+                block = ""
+        else:
+            print("hello")
+            block = block+line+"\n"
+    if block != '':
+        blocks.append(block.strip())
+    return blocks
+
+def block_to_block_type(block):
+    if block[0] == "#":
+        return "heading"
+    if block[:2] == "```" and block[-3:] == '```':
+        return "code"
+    lines = block.split("\n")
+    if functools.reduce(lambda bool, line: line[0] == ">" and bool, lines):
+        return "quote"
+    if functools.reduce(lambda bool, line: (line[:1]=="* " or line[:1]=="- ") and bool, lines):
+        return "unordered_list"
+    condition = True
+    for i in range(0, len(lines)):
+        if lines[i][:2] == f"{i+1}. ":
+            condition = True
+        else:
+            condition = False
+    if condition:
+        return "ordered_list"
+    else:
+        return "paragraph"

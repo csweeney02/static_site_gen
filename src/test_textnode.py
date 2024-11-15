@@ -1,5 +1,5 @@
 import unittest
-
+import functools
 from textnode import TextNode, TextType
 from markdown_converter import *
 
@@ -33,10 +33,16 @@ class TestTextNode(unittest.TestCase):
             "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
             TextType.TEXT,
         )
-        print(split_nodes_link([node]))'''
+        print(split_nodes_link([node]))
     def test_text_to_textnodes(self):
         text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
         print(text_to_textnodes(text))
+    def test_markdown_to_blocks(self):
+        markdown = "#This is a heading\n\nThis is a paragraph. **bold text**\n\n*Item One\n*Item two\n*item three"
+        print(markdown_to_blocks(markdown))'''
+    def test_block_to_block_type(self):
+        block = "```test line```"
+        print(block_to_block_type(block))
 
 if __name__ == "__main__":
     unittest.main()
