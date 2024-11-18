@@ -2,6 +2,7 @@ import unittest
 import functools
 from textnode import TextNode, TextType
 from markdown_converter import *
+from main import *
 
 
 class TestTextNode(unittest.TestCase):
@@ -42,11 +43,14 @@ class TestTextNode(unittest.TestCase):
         print(markdown_to_blocks(markdown))
     def test_block_to_block_type(self):
         block = ">test line\n* test line\n>yes"
-        print(block_to_block_type(block))'''
+        print(block_to_block_type(block))
     def test_markdown_to_html_node(self):
         markdown = "## First test to see if anything breaks\n\n1. hello\n2. goodbye"
         text = markdown_to_html_node(markdown)
-        print(text)
+        print(text)'''
+    def test_extract_title(self):
+        markdown = "hello world\nhello world again\n# this time bigger"
+        print(extract_title(markdown))
 
 if __name__ == "__main__":
     unittest.main()

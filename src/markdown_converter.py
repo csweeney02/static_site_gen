@@ -10,8 +10,8 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
             node_list.append(old_node)
         else:
             text_list = old_node.text.split(delimiter)
-            if len(text_list) % 2 == 0:
-                raise Exception("invalid markdown syntax")
+            #if len(text_list) % 2 == 0:
+                #raise Exception("invalid markdown syntax")
             new_nodes = []
             for text in text_list:
                 if len(new_nodes) == 0 or len(new_nodes) % 2 == 0:
@@ -93,7 +93,7 @@ def markdown_to_blocks(markdown):
                 block = ""
         else:
             block = block+line+"\n"
-    if block != '':
+    if block != '' and block != None:
         blocks.append(block.strip())
     return blocks
 
@@ -147,8 +147,13 @@ def markdown_to_html_node(markdown):
 def block_to_children(block):
     lines = block.split('\n')
     all_children = []
+    i = 0
     for line in lines:
-        all_children.extend(text_to_children(line))
+        i += 1
+        if line.startswith(('#',"* ","-",f'{i}.')):
+            line = line.split(' ', 1)
+            line = line[-1]
+        all_children.append(text_to_children(line))
     return all_children
 
 def text_to_children(text):
