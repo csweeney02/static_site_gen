@@ -41,7 +41,7 @@ class TestTextNode(unittest.TestCase):
         markdown = "#This is a heading\n\nThis is a paragraph. **bold text**\n\n*Item One\n*Item two\n*item three"
         print(markdown_to_blocks(markdown))'''
     def test_block_to_block_type(self):
-        block = "```test line```"
+        block = ">test line\n* test line\n>yes"
         print(block_to_block_type(block))
 
 if __name__ == "__main__":

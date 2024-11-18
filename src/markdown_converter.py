@@ -1,6 +1,7 @@
 import re
 import functools
 from textnode import *
+from htmlnode import *
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     node_list = []
@@ -101,20 +102,38 @@ def markdown_to_blocks(markdown):
 def block_to_block_type(block):
     if block[0] == "#":
         return "heading"
-    if block[:2] == "```" and block[-3:] == '```':
+    if block[:3] == "```" and block[-3:] == '```':
         return "code"
     lines = block.split("\n")
-    if functools.reduce(lambda bool, line: line[0] == ">" and bool, lines):
-        return "quote"
-    if functools.reduce(lambda bool, line: (line[:1]=="* " or line[:1]=="- ") and bool, lines):
-        return "unordered_list"
     condition = True
     for i in range(0, len(lines)):
-        if lines[i][:2] == f"{i+1}. ":
+        if lines[i][0] == ">":
             condition = True
         else:
             condition = False
+            break
+    if condition:
+        return "quote"
+    condition = True
+    for i in range(0, len(lines)):
+        if lines[i][:2] == "* " or lines[i][:2] == "- ":
+            condition = True
+        else:
+            condition = False
+            break
+    if condition:
+        return "unordered_list"
+    condition = True
+    for i in range(0, len(lines)):
+        if lines[i][:3] == f"{i+1}. ":
+            condition = True
+        else:
+            condition = False
+            break
     if condition:
         return "ordered_list"
     else:
         return "paragraph"
+
+def markdown_to_html_node(markdown):
+
