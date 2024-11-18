@@ -158,7 +158,7 @@ def block_to_children(block):
 
 def text_to_children(text):
     text_nodes = text_to_textnodes(text)
-    return list(map(text_node_to_html_node, text_nodes))
+    return ParentNode('p',list(map(text_node_to_html_node, text_nodes)))
 
 
 def text_node_to_html_node(text_node):
