@@ -88,12 +88,10 @@ def markdown_to_blocks(markdown):
     block = ""
     for line in lines:
         if line == "":
-            print("hi")
             if block != "":
                 blocks.append(block.strip())
                 block = ""
         else:
-            print("hello")
             block = block+line+"\n"
     if block != '':
         blocks.append(block.strip())
@@ -101,7 +99,9 @@ def markdown_to_blocks(markdown):
 
 def block_to_block_type(block):
     if block[0] == "#":
-        return "heading"
+        hashes = block.split(" ", 1)
+        number = len(hashes[0])
+        return "heading"+str(number)
     if block[:3] == "```" and block[-3:] == '```':
         return "code"
     lines = block.split("\n")
@@ -136,4 +136,57 @@ def block_to_block_type(block):
         return "paragraph"
 
 def markdown_to_html_node(markdown):
+    blocks = markdown_to_blocks(markdown)
+    html_blocks = []
+    for block in blocks:
+        type = block_to_block_type(block)
+        children = block_to_children(block)
+        html_blocks.append(block_type_to_parent_node(type, children))
+    return ParentNode("div", html_blocks)
+
+def block_to_children(block):
+    lines = block.split('\n')
+    all_children = []
+    for line in lines:
+        all_children.extend(text_to_children(line))
+    return all_children
+
+def text_to_children(text):
+    text_nodes = text_to_textnodes(text)
+    return list(map(text_node_to_html_node, text_nodes))
+
+
+def text_node_to_html_node(text_node):
+    match text_node.text_type:
+        case TextType.TEXT:
+            return LeafNode(None, text_node.text)
+        case TextType.BOLD:
+            return LeafNode("b", text_node.text)
+        case TextType.ITALIC:
+            return LeafNode("i", text_node.text)
+        case TextType.CODE:
+            return LeafNode("code", text_node.text)
+        case TextType.LINK:
+            return LeafNode("a", text_node.text, {"href":text_node.url})
+        case TextType.IMAGE:
+            return LeafNode("img", "", {"src":text_node.url, "alt":text_node.text})
+    raise Exception("text type not supported")
+
+def block_type_to_parent_node(block_type, children):
+    if block_type == "paragraph":
+        return ParentNode("p", children)
+    if block_type == "quote":
+        return ParentNode("blockquote", children)
+    if block_type == "unordered_list":
+        return ParentNode('ul', list(map(tag_list, children)))
+    if block_type == "ordered_list":
+        return ParentNode('ol', list(map(tag_list, children)))
+    if block_type == "code":
+        return ParentNode('pre', ParentNode('code', children))
+    if block_type[:7] == "heading":
+        number = int(block_type[-1])
+        return ParentNode(f"h{number}", children)
+    
+def tag_list(html_node):
+    return ParentNode('li', html_node)
 

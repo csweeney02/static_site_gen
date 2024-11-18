@@ -39,10 +39,14 @@ class TestTextNode(unittest.TestCase):
         print(text_to_textnodes(text))
     def test_markdown_to_blocks(self):
         markdown = "#This is a heading\n\nThis is a paragraph. **bold text**\n\n*Item One\n*Item two\n*item three"
-        print(markdown_to_blocks(markdown))'''
+        print(markdown_to_blocks(markdown))
     def test_block_to_block_type(self):
         block = ">test line\n* test line\n>yes"
-        print(block_to_block_type(block))
+        print(block_to_block_type(block))'''
+    def test_markdown_to_html_node(self):
+        markdown = "## First test to see if anything breaks\n\n1. hello\n2. goodbye"
+        text = markdown_to_html_node(markdown)
+        print(text)
 
 if __name__ == "__main__":
     unittest.main()

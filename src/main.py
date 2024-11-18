@@ -1,26 +1,23 @@
 from textnode import *
 from htmlnode import *
+import shutil
+import os
 
 def main():
-    text = TextNode("hello", TextType.LINK, "www.google.com")
-    print(text_node_to_html_node(text))
+    source = '/home/yllsved/workspace/github.com/csweeney02/static_site_gen/static'
+    destination = '/home/yllsved/workspace/github.com/csweeney02/static_site_gen/public'
+    copy_contents(source, destination)
 
-def text_node_to_html_node(text_node):
-    match text_node.text_type:
-        case TextType.TEXT:
-            return LeafNode(None, text_node.text)
-        case TextType.BOLD:
-            return LeafNode("b", text_node.text)
-        case TextType.ITALIC:
-            return LeafNode("i", text_node.text)
-        case TextType.CODE:
-            return LeafNode("code", text_node.text)
-        case TextType.LINK:
-            return LeafNode("a", text_node.text, {"href":text_node.url})
-        case TextType.IMAGE:
-            return LeafNode("img", "", {"src":text_node.url, "alt":text_node.text})
-    raise Exception("text type not supported")
-
+def copy_contents(source, destination):
+    if destination == '/home/yllsved/workspace/github.com/csweeney02/static_site_gen/public' and os.path.exists(destination):
+        shutil.rmtree(destination)
+    os.mkdir(destination)
+    directories = os.listdir(source)
+    for dir in directories:
+        if os.path.isfile(source+'/'+dir):
+            shutil.copy(source+'/'+dir, destination)
+        else:
+            copy_contents(source+'/'+dir, destination+'/'+dir)
 
 
 main()
